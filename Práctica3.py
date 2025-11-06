@@ -60,3 +60,69 @@ class Dispositivo(ABC):
     def mostrar_datos(self):
         """Muestra la información específica y estado del dispositivo."""
         pass
+
+# --- 2. SUBCLASES CONCRETAS ---
+
+class LuzInteligente(Dispositivo):
+    """
+    Subclase para una Luz Inteligente.
+    Hereda de Dispositivo.
+    """
+    
+    def __init__(self, id_dispositivo, intensidad=0):
+        # Llamamos al constructor de la clase padre (Dispositivo)
+        super().__init__(id_dispositivo)
+        self._intensidad = intensidad
+
+    @property
+    def intensidad(self):
+        """Obtiene la intensidad de la luz."""
+        return self._intensidad
+    
+    @intensidad.setter
+    def intensidad(self, valor):
+        """Establece la intensidad, validando que esté en rango."""
+        if 0 <= valor <= 100:
+            self._intensidad = valor
+            if self._estado == "encendido":
+                 print(f"Luz {self.id_dispositivo}: Intensidad ajustada al {valor}%.")
+        else:
+            print("Error: La intensidad debe estar entre 0 y 100.")
+
+    def encender(self):
+        """Enciende la luz a una intensidad media por defecto."""
+        self._estado = "encendido"
+        if self._intensidad == 0:
+            self._intensidad = 50  # Intensidad por defecto al encender
+        print(f"Luz {self.id_dispositivo} encendida (Intensidad: {self._intensidad}%).")
+
+    def apagar(self):
+        """Apaga la luz y pone la intensidad a 0."""
+        self._estado = "apagado"
+        self._intensidad = 0
+        print(f"Luz {self.id_dispositivo} apagada.")
+
+    def mostrar_datos(self):
+        """Muestra el estado e intensidad de la luz."""
+        print(f"[Luz] ID: {self.id_dispositivo} | Estado: {self.estado} | Intensidad: {self.intensidad}%")
+
+
+class CamaraSeguridad(Dispositivo):
+    """
+    Subclase para una Cámara de Seguridad.
+    Hereda de Dispositivo.
+    """
+    
+    def __init__(self, id_dispositivo):
+        super().__init__(id_dispositivo)
+        self._grabando = False
+
+    @property
+    def grabando(self):
+        """Indica si la cámara está grabando."""
+        return self._grabando
+
+    def encender(self):
+        """Enciende la cámara (modo 'standby')."""
+        self._estado = "standby" # Un estado más específico que "encendido"
+        print(f"Cámara {self.id_dispositivo} encendida (en espera).")
