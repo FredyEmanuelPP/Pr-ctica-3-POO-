@@ -126,3 +126,61 @@ class CamaraSeguridad(Dispositivo):
         """Enciende la cámara (modo 'standby')."""
         self._estado = "standby" # Un estado más específico que "encendido"
         print(f"Cámara {self.id_dispositivo} encendida (en espera).")
+    def apagar(self):
+        """Apaga la cámara y detiene cualquier grabación."""
+        self._estado = "apagado"
+        if self._grabando:
+            self.detener_grabacion()
+        print(f"Cámara {self.id_dispositivo} apagada.")
+
+    def iniciar_grabacion(self):
+        """Inicia la grabación si la cámara está encendida."""
+        if self._estado == "standby":
+            self._grabando = True
+            self._estado = "grabando"
+            print(f"Cámara {self.id_dispositivo}: ¡GRABANDO!")
+        elif self._estado == "apagado":
+            print(f"Cámara {self.id_dispositivo}: No se puede grabar, está apagada.")
+        else:
+             print(f"Cámara {self.id_dispositivo}: Ya estaba grabando.")
+
+    def detener_grabacion(self):
+        """Detiene la grabación."""
+        if self._grabando:
+            self._grabando = False
+            self._estado = "standby" # Vuelve a espera
+            print(f"Cámara {self.id_dispositivo}: Grabación detenida.")
+
+    def mostrar_datos(self):
+        """Muestra el estado y si está grabando."""
+        estado_grabacion = "Sí" if self.grabando else "No"
+        print(f"[Cámara] ID: {self.id_dispositivo} | Estado: {self.estado} | Grabando: {estado_grabacion}")
+
+
+class SensorMovimiento(Dispositivo):
+    """
+    Subclase para un Sensor de Movimiento.
+    Hereda de Dispositivo.
+    """
+    
+    def _init_(self, id_dispositivo):
+        super()._init_(id_dispositivo)
+        self._movimiento_detectado = False
+
+    @property
+    def movimiento_detectado(self):
+        """Indica si se ha detectado movimiento recientemente."""
+        return self._movimiento_detectado
+
+    def encender(self):
+        """Activa el sensor."""
+        self._estado = "activo"
+        self._movimiento_detectado = False # Resetea al activar
+        print(f"Sensor {self.id_dispositivo} activado.")
+        
+    def apagar(self):
+        """Desactiva el sensor."""
+        self._estado = "inactivo"
+        self._movimiento_detectado = False
+        print(f"Sensor {self.id_dispositivo} desactivado.")
+    
