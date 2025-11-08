@@ -184,3 +184,48 @@ class SensorMovimiento(Dispositivo):
         self._movimiento_detectado = False
         print(f"Sensor {self.id_dispositivo} desactivado.")
     
+    
+    def simular_movimiento(self):
+        """Simula la detección de movimiento."""
+        if self._estado == "activo":
+            self._movimiento_detectado = True
+            print(f"Sensor {self.id_dispositivo}: ¡¡MOVIMIENTO DETECTADO!!")
+        else:
+            print(f"Sensor {self.id_dispositivo}: Está inactivo, no puede detectar.")
+
+    def mostrar_datos(self):
+        """Muestra el estado del sensor y si hay detección."""
+        deteccion = "Sí" if self.movimiento_detectado else "No"
+        print(f"[Sensor] ID: {self.id_dispositivo} | Estado: {self.estado} | Movimiento Detectado: {deteccion}")
+
+
+# --- 3. CLASE DE COMPOSICIÓN ---
+
+class CasaInteligente:
+    """
+    Clase que gestiona todos los dispositivos de la casa.
+    Utiliza composición (tiene una lista de objetos Dispositivo).
+    """
+    
+    def _init_(self, nombre):
+        self.nombre = nombre
+        self._dispositivos = []  # Lista para almacenar los dispositivos
+        print(f"Casa Inteligente '{nombre}' creada.")
+
+    def agregar_dispositivo(self, dispositivo):
+        """Agrega un dispositivo a la casa."""
+        # Verificamos que sea un Dispositivo antes de agregarlo
+        if isinstance(dispositivo, Dispositivo):
+            self._dispositivos.append(dispositivo)
+            print(f"Dispositivo '{dispositivo.id_dispositivo}' agregado a '{self.nombre}'.")
+        else:
+            print("Error: Solo se pueden agregar objetos que hereden de 'Dispositivo'.")
+
+    def mostrar_todos(self):
+        """Muestra el estado de todos los dispositivos en la casa."""
+        print("-" * 30)
+        print(f"Estado de Dispositivos en: {self.nombre}")
+        print("-" * 30)
+        if not self._dispositivos:
+            print("No hay dispositivos registrados en la casa.")
+            return
