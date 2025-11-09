@@ -327,7 +327,7 @@ if _name_ == "_main_":
     print("\n===== ¡Simulando Movimiento! =====")
     sensor_puerta.simular_movimiento()
     
-    # Pausa para ver la simulación
+     # Pausa para ver la simulación
     time.sleep(1)
 
     # 8. Ejecutar escena DE NUEVO (ahora sí debe reaccionar)
@@ -337,4 +337,5 @@ if _name_ == "_main_":
     print("\n===== Estado Final de la Casa =====")
     mi_casa.mostrar_todos()
     
-    print("===== FIN DE LA SIMULACIÓN =====")
+    print("===== FIN DE LA SIMULACIÓN =====")
+
