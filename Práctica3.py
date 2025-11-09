@@ -229,3 +229,112 @@ class CasaInteligente:
         if not self._dispositivos:
             print("No hay dispositivos registrados en la casa.")
             return
+
+ for d in self._dispositivos:
+            # Polimorfismo en acción:
+            # Python llama al método mostrar_datos() de la clase
+            # correcta (Luz, Camara, Sensor) automáticamente.
+            d.mostrar_datos()
+        print("-" * 30)
+
+    def ejecutar_escena(self, nombre_escena):
+        """
+        Ejecuta una acción coordinada basada en el estado de los dispositivos.
+        Ejemplo: "Si hay movimiento, enciende luces y graba."
+        """
+        print(f"\n>>> Ejecutando Escena: '{nombre_escena}' <<<")
+        
+        if nombre_escena == "alerta_movimiento":
+            sensor_activado = None
+            
+            # 1. Buscar si algún sensor detectó movimiento
+            for d in self._dispositivos:
+                if isinstance(d, SensorMovimiento) and d.movimiento_detectado:
+                    sensor_activado = d
+                    break # Encontramos uno, salimos del bucle
+            
+            # 2. Si hubo detección, activar otros dispositivos
+            if sensor_activado:
+                print(f"ALERTA: Movimiento detectado por {sensor_activado.id_dispositivo}.")
+                print("Acción: Encendiendo luces y activando cámaras...")
+                
+                for d in self._dispositivos:
+                    # Si es una luz, encenderla al 100%
+                    if isinstance(d, LuzInteligente):
+                        d.encender()
+                        d.intensidad = 100
+                    
+                    # Si es una cámara, iniciar grabación
+                    if isinstance(d, CamaraSeguridad):
+                        # La cámara debe estar encendida (standby) para grabar
+                        if d.estado == "apagado":
+                            d.encender() 
+                        
+                        d.iniciar_grabacion()
+            else:
+                print("Escena 'alerta_movimiento' verificada. No se detectó movimiento.")
+        else:
+            print(f"Escena '{nombre_escena}' no reconocida.")
+
+
+# --- 4. SIMULACIÓN (Bloque principal) ---
+
+# Esto asegura que el código solo se ejecute si el script es
+# el archivo principal (y no si es importado por otro script).
+if _name_ == "_main_":
+    
+    print("===== INICIANDO SIMULACIÓN DE CASA INTELIGENTE =====")
+    
+    # 1. Crear la casa
+    mi_casa = CasaInteligente("Hogar Principal")
+    print("=" * 50)
+
+    # 2. Crear los 5 dispositivos
+    luz_sala = LuzInteligente("LUZ-SALA-01")
+    luz_cocina = LuzInteligente("LUZ-COCINA-01")
+    sensor_puerta = SensorMovimiento("SEN-PUERTA-01")
+    camara_entrada = CamaraSeguridad("CAM-ENTRADA-01")
+    camara_patio = CamaraSeguridad("CAM-PATIO-01")
+
+    # 3. Agregarlos a la casa
+    print("\n===== Agregando Dispositivos =====")
+    mi_casa.agregar_dispositivo(luz_sala)
+    mi_casa.agregar_dispositivo(luz_cocina)
+    mi_casa.agregar_dispositivo(sensor_puerta)
+    mi_casa.agregar_dispositivo(camara_entrada)
+    mi_casa.agregar_dispositivo(camara_patio)
+
+    # 4. Mostrar estado inicial (todos deben estar apagados)
+    mi_casa.mostrar_todos()
+
+    # 5. Simular lecturas y encendidos
+    print("\n===== Simulación de Uso Diario =====")
+    
+    # Encendemos los dispositivos que deben estar activos
+    sensor_puerta.encender()
+    camara_entrada.encender() # La ponemos en standby
+    luz_sala.encender()
+    luz_sala.intensidad = 20 # Luz tenue
+    
+    # Pausa para ver la simulación
+    time.sleep(1) 
+
+    # 6. Ejecutar escena SIN movimiento
+    mi_casa.ejecutar_escena("alerta_movimiento")
+    mi_casa.mostrar_todos()
+    
+    # 7. Simular detección de movimiento
+    print("\n===== ¡Simulando Movimiento! =====")
+    sensor_puerta.simular_movimiento()
+    
+    # Pausa para ver la simulación
+    time.sleep(1)
+
+    # 8. Ejecutar escena DE NUEVO (ahora sí debe reaccionar)
+    mi_casa.ejecutar_escena("alerta_movimiento")
+    
+    # 9. Mostrar estado final
+    print("\n===== Estado Final de la Casa =====")
+    mi_casa.mostrar_todos()
+    
+    print("===== FIN DE LA SIMULACIÓN =====")
